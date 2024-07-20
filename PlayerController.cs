@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("trigger");
         if (other.CompareTag("Coin"))
         {
             scoreManager.IncreaseScore(); // 점수 증가

@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public Text scoreText; // 점수를 표시할 UI 텍스트
+    public TextMeshProUGUI scoreText; // 점수를 표시할 UI 텍스트
     private int score = 0; // 현재 점수
 
     void Start()
@@ -17,7 +18,8 @@ public class ScoreManager : MonoBehaviour
     {
         score++; // 점수를 1 증가시킵니다.
         UpdateScoreText(); // 점수 텍스트를 업데이트합니다.
-    }
+        Debug.Log(score);
+    }   
 
     void UpdateScoreText()
     {
