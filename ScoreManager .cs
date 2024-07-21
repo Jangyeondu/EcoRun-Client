@@ -18,8 +18,13 @@ public class ScoreManager : MonoBehaviour
     {
         score++; // 점수를 1 증가시킵니다.
         UpdateScoreText(); // 점수 텍스트를 업데이트합니다.
-        Debug.Log(score);
     }   
+
+    public void DecreaseScore()
+    {
+        score--;
+        UpdateScoreText();
+    }
 
     void UpdateScoreText()
     {

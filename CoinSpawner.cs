@@ -5,27 +5,35 @@ using UnityEngine;
 public class CoinSpawner : MonoBehaviour
 {
     public GameObject coinPrefab; // 생성할 코인 프리팹
-    public float spawnInterval = 2f; // 코인 생성 간격
-    public float destroyX = -10f; // 코인이 사라지는 X 위치
-    public float newX = -7f;
-
+    public GameObject enemyPrefab; // 생성할 적 프리팹
+    public float spawnInterval = 0.5f; // 코인 및 적 생성 간격
+    public float spawnHeight = 1f; // 생성되는 높이의 범위
     private float nextSpawnTime = 0f;
+    public float moveSpeed = 5f; // 오브젝트 이동 속도
 
     void Update()
     {
         if (Time.time > nextSpawnTime)
         {
-            SpawnCoin();
+            SpawnRandomObject();
             nextSpawnTime = Time.time + spawnInterval;
         }
     }
 
-    void SpawnCoin()
+    void SpawnRandomObject()
     {
-        newX += 2;
-        Vector2 spawnPosition = new Vector2(newX, -1f);
-        GameObject coin = Instantiate(coinPrefab, spawnPosition, Quaternion.identity); // 코인 생성
+        Vector2 spawnPosition = new Vector2(4f, Random.Range(-2f, -1f));
+        GameObject spawnedObject;
+
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            spawnedObject = Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+        }
+        else
+        {
+            spawnedObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        }
+
+        spawnedObject.AddComponent<MoveLeft>().moveSpeed = moveSpeed;
     }
 }
-
-

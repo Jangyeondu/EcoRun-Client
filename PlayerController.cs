@@ -6,13 +6,20 @@ public class PlayerController : MonoBehaviour
 {
     public float jumpHeight = 2f; // 점프 높이
     public float jumpDuration = 0.5f; // 점프 시간
+    public float slideDuration = 1f; // 슬라이드 시간
+
     public Sprite jumpSprite; // 점프할 때 사용할 스프라이트
-    private Sprite defaultSprite; // 기본 스프라이트
+    public Sprite slideSprite; // 슬라이드할 때 사용할 스프라이트
+    public Sprite defaultSprite; // 기본 스프라이트
+
     private Vector3 startPosition;
     private bool isJumping = false;
+    private bool isSliding = false;
     private float jumpTimer;
     private SpriteRenderer spriteRenderer;
     private ScoreManager scoreManager; // 점수를 관리하는 스크립트
+
+    private Coroutine resetSpriteCoroutine;
 
     void Start()
     {
@@ -25,9 +32,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping && !isSliding)
         {
             Jump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow) && !isSliding && !isJumping)
+        {
+            Slide();
         }
 
         if (isJumping)
@@ -58,6 +70,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    IEnumerator ResetSpriteAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        spriteRenderer.sprite = defaultSprite;
+        isSliding = false; // 슬라이드 상태 종료
+    }
+
     void Jump()
     {
         isJumping = true;
@@ -65,13 +84,30 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.sprite = jumpSprite; // 점프 스프라이트로 변경
     }
 
+    void Slide()
+    {
+        isSliding = true;
+        spriteRenderer.sprite = slideSprite; // 슬라이드 스프라이트로 변경
+
+        // 슬라이드가 끝나면 기본 스프라이트로 되돌리는 Coroutine 시작
+        if (resetSpriteCoroutine != null)
+        {
+            StopCoroutine(resetSpriteCoroutine);
+        }
+        resetSpriteCoroutine = StartCoroutine(ResetSpriteAfterDelay(slideDuration));
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("trigger");
         if (other.CompareTag("Coin"))
         {
             scoreManager.IncreaseScore(); // 점수 증가
             Destroy(other.gameObject); // 코인 제거
+        }
+        else if (other.CompareTag("Enemy"))
+        {
+            scoreManager.DecreaseScore();
+            Destroy(other.gameObject);
         }
     }
 }
