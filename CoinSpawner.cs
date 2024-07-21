@@ -6,46 +6,34 @@ public class CoinSpawner : MonoBehaviour
 {
     public GameObject coinPrefab; // 생성할 코인 프리팹
     public GameObject enemyPrefab; // 생성할 적 프리팹
-    public float spawnInterval = 4f; // 코인 생성 간격
-    public float destroyX = -10f; // 코인이 사라지는 X 위치
-    public float newX = -7f;
-    public float newY = 0f;
-    public float spawnItem = 0f;
-
+    public float spawnInterval = 0.5f; // 코인 및 적 생성 간격
+    public float spawnHeight = 1f; // 생성되는 높이의 범위
     private float nextSpawnTime = 0f;
+    public float moveSpeed = 5f; // 오브젝트 이동 속도
 
     void Update()
     {
-        spawnItem = Random.Range(0, 2);
-        Debug.Log(spawnItem);
         if (Time.time > nextSpawnTime)
         {
-            if(spawnItem == 0)
-            {
-                SpawnCoin();
-            }
-            else
-            {
-                SpawnEnemy();
-            }
+            SpawnRandomObject();
+            nextSpawnTime = Time.time + spawnInterval;
         }
     }
 
-    void SpawnCoin()
+    void SpawnRandomObject()
     {
-        newY = Random.Range(-1f, 1f);
-        newX += 1;
-        Vector2 spawnPosition = new Vector2(newX, newY);
-        GameObject coin = Instantiate(coinPrefab, spawnPosition, Quaternion.identity); // 코인 생성
-    }
+        Vector2 spawnPosition = new Vector2(4f, Random.Range(-2f, -1f));
+        GameObject spawnedObject;
 
-    void SpawnEnemy()
-    {
-        newY = Random.Range(-1f, 1f);
-        newX += 1;
-        Vector2 spawnPosition = new Vector2(newX, newY);
-        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity); // 코인 생성
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            spawnedObject = Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+        }
+        else
+        {
+            spawnedObject = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        }
+
+        spawnedObject.AddComponent<MoveLeft>().moveSpeed = moveSpeed;
     }
 }
-
-
